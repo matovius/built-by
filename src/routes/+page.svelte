@@ -103,9 +103,9 @@
 	</main>
 
 	<footer class="footer">
-		<a href="https://matovius.pages.dev" target="_blank" rel="noopener noreferrer" class="link">
-			<span>by @matovius</span>
-		</a>
+		<span>
+			Crafted at The Webware Workshop
+		</span>
 	</footer>
 </div>
 
@@ -215,6 +215,10 @@
 		right: 0;
 		isolation: isolate;
 		padding: 24px;
+
+		& > span {
+			color: hsl(var(--clr-black-bean));
+		}
 
 		& > .link {
 			font-size: 16px;
