@@ -2,15 +2,17 @@
 	import { onMount } from 'svelte';
 	import { adjectives } from '$lib/adjectives';
 	import AboutModal from '$lib/components/AboutModal.svelte';
+	import Header from '$lib/components/Header.svelte';
+	import { fly, scale } from 'svelte/transition';
+	import { quadInOut, quintInOut } from 'svelte/easing';
 
-	let MainHeading: HTMLHeadingElement;
-	//let MainContent: HTMLElement;
+	let showPage: boolean = false;
+
 	let GeneratedWrapper: HTMLDivElement;
 	let generatedText: string;
-
-	let mainContentOpacity: number = 0;
-	let genTextOpacity: number = 0;
-	let genTextRotation: string = '-90deg';
+	
+	let genTextOpacity: number = 1;
+	let genTextRotation: string = '0deg';
 	//let genTextTransitionDuration: number = 0;
 
 	let isAboutModalOpen: boolean = false;
@@ -44,10 +46,7 @@
 	onMount(() => {
 		setTimeout(() => {
 			generatedText = getRandomAdjective();
-			MainHeading.style.transform = 'scale(50%)';
-			MainHeading.style.opacity = '20%';
-			mainContentOpacity = 1;
-			showGenerated();
+			showPage = true;
 		}, 2000);
 	});
 </script>
@@ -56,57 +55,59 @@
 	<title>Built By</title>
 </svelte:head>
 
-<div class="container">
-	<header class="header">
-		<h1 class="heading" bind:this={MainHeading}>
-			<span>Built</span>
-			<br />
-			<span>By</span>
-		</h1>
-	</header>
-
-	<main
-		class="main"
-		style={`opacity: ${mainContentOpacity}; transition: opacity 250ms ease-in; transition-delay: 500ms;`}
-	>
-		<div class="about-cta">
-			<button
-				class="button"
-				on:click={() => {
-					isAboutModalOpen = true;
-				}}
-			>
-				<span>About</span>
-			</button>
-		</div>
-		<div class="subheading">
-			<h2 class="h2">
-				<div
-					class="generated"
-					bind:this={GeneratedWrapper}
-					style={`transition-duration: 250ms; transform: rotate(${genTextRotation}); opacity: ${genTextOpacity};`}
-				>
-					<span class="text">{generatedText}</span>
-				</div>
-				<span>by you</span>
-			</h2>
-		</div>
-		<!-- div.SubMainHeading -->
-		<div class="cta">
-			<button class="button" on:click={toggleGenerated}>
-				<span>Cycle</span>
-			</button>
-		</div>
-		<!-- div.CTA -->
-
+{#if showPage}
+	<div class="about-container" transition:scale={{ delay: 500, duration: 500, easing: quintInOut, start: 0, opacity: 0 }}>
+		<button
+			class="button"
+			on:click={() => {
+				isAboutModalOpen = true;
+			}}
+		>
+			<span>About</span>
+		</button>
 		<AboutModal bind:isOpen={isAboutModalOpen} />
-	</main>
+	</div>
+{/if}
 
-	<footer class="footer">
-		<span>
-			Crafted at The Webware Workshop
-		</span>
-	</footer>
+<div class="container">
+	<Header isPageLoaded={showPage} />
+
+
+	{#if showPage}
+		<main
+			class="main"
+			transition:fly={{ duration: 500, easing: quadInOut, x: 0, y: '20%', opacity: 0 }}
+		>
+			<div class="subheading">
+				<h2 class="h2">
+					<div
+						class="generated"
+						bind:this={GeneratedWrapper}
+						style={`transition-duration: 250ms; transform: rotate(${genTextRotation}); opacity: ${genTextOpacity};`}
+					>
+						<span class="text">{generatedText}</span>
+					</div>
+					<span>by you</span>
+				</h2>
+			</div>
+			<!-- div.SubMainHeading -->
+			
+			<div class="cta">
+				<button class="button" on:click={toggleGenerated}>
+					<span>Cycle</span>
+				</button>
+			</div>
+			<!-- div.CTA -->
+		</main>
+	{/if}
+
+	{#if showPage}
+		<footer class="footer" transition:scale={{ delay: 500, duration: 500, easing: quintInOut, start: 0, opacity: 0 }}>
+			<span>
+				Crafted at The Webware Workshop
+			</span>
+		</footer>
+	{/if}
 </div>
 
 <style>
@@ -118,22 +119,20 @@
 		position: relative;
 	}
 
-	.header {
-		width: 100%;
-		padding-inline: 20px;
-		padding-block: 20px;
-		isolation: isolate;
+	.about-container {
+		padding: 20px;
+		position: fixed;
+		top: 0;
+		right: 0;
 
-		& > .heading {
-			font-size: 90px;
-			font-weight: 900;
-			line-height: 1;
+		& > .button {
 			color: hsl(var(--clr-black-bean));
-			transform-origin: 0 0;
-			transition: transform opacity 500ms ease-in;
+			padding: 12px;
+			background: hsl(var(--clr-pale-dogwood));
 
-			@media screen and (min-width: 900px) {
-				font-size: 180px;
+			&:where(:hover, :focus) {
+				color: hsl(var(--clr-pale-dogwood));
+				background: hsl(var(--clr-black-bean));
 			}
 		}
 	}
@@ -145,24 +144,6 @@
 
 		@media screen and (min-width: 900px) {
 			padding-top: 120px;
-		}
-
-		& > .about-cta {
-			padding: 20px;
-			position: fixed;
-			top: 0;
-			right: 0;
-
-			& > .button {
-				color: hsl(var(--clr-black-bean));
-				padding: 20px;
-				background: hsl(var(--clr-pale-dogwood));
-
-				&:where(:hover, :focus) {
-					color: hsl(var(--clr-pale-dogwood));
-					background: hsl(var(--clr-black-bean));
-				}
-			}
 		}
 
 		& > .subheading {

@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { quadInOut } from "svelte/easing";
+	import { fly } from "svelte/transition";
+
 	export let isOpen: boolean = false;
 
 	let Modal: HTMLDialogElement;
@@ -13,32 +16,34 @@
 		opacity = 0;
 		setTimeout(() => {
 			Modal.close();
-		}, 250);
+		}, 750);
 	}
 </script>
 
 <dialog class="modal" bind:this={Modal}>
-	<div class="container" style={`opacity: ${opacity};`}>
+	<div class="container" style={`transition: opacity 250ms ease; opacity: ${opacity};`}>
 		<div class="close-modal">
 			<button
-				class="button"
-				on:click={() => {
-					isOpen = false;
-				}}
-			>
+			class="button"
+			on:click={() => {
+				isOpen = false;
+			}}
+				>
 				<span>Close</span>
 			</button>
 		</div>
-
-		<div class="content">
-			<h2 class="h2">Sophisticated adjectives for sophisticated developers</h2>
-			<p class="p">
-				Built By is for developers that are tired of always using the same adjective in the footers
-				of all their projects. You'll get a suggestion from a curated list of adjectives, perfectly
-				crafted for use in any project. Whichever one you fancy, you can use, no strings attached.
-			</p>
-		</div>
-		<div class="backdrop"></div>
+		
+		{#if isOpen}
+			<div class="content" transition:fly={{ delay: 250, duration: 500, easing: quadInOut, x: 0, y: '10%', opacity: 0 }}>
+				<h2 class="h2">Sophisticated adjectives for sophisticated developers</h2>
+				<p class="p">
+					Built By is for developers that are tired of always using the same adjective in the footers
+					of all their projects. You'll get a suggestion from a curated list of adjectives, perfectly
+					crafted for use in any project. Whichever one you fancy, you can use, no strings attached.
+				</p>
+			</div>
+			<div class="backdrop"></div>
+		{/if}
 	</div>
 </dialog>
 
