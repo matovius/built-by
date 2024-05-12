@@ -25,5 +25,14 @@ export const adjectives: string[] = [
 	'arranged',
 	'orchestrated',
 	'formulated',
-	'materialized'
+	'materialized',
+	'surfaced',
+	'raised',
+	'formed',
+	'cemented',
+	'solidified',
+	'ideated',
+	'staged',
+	'pioneered',
+	'exhibited'
 ];
