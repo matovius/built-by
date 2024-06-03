@@ -1,41 +1,21 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { adjectives } from '$lib/adjectives';
-	import AboutModal from '$lib/components/AboutModal.svelte';
-	import Header from '$lib/components/Header.svelte';
-	import { fly, scale } from 'svelte/transition';
-	import { quadInOut, quintInOut } from 'svelte/easing';
+	import { fly } from 'svelte/transition';
+	import { quadInOut } from 'svelte/easing';
 
 	let showPage: boolean = false;
-
-	let GeneratedWrapper: HTMLDivElement;
-	let generatedText: string;
+	let generatedText: string = '';
+	let isGenerated: boolean = false;
 	
-	let genTextOpacity: number = 1;
-	let genTextRotation: string = '0deg';
-	//let genTextTransitionDuration: number = 0;
-
-	let isAboutModalOpen: boolean = false;
-
-	function showGenerated() {
-		setTimeout(() => {
-			//genTextTransitionDuration = 250;
-			genTextOpacity = 1;
-			genTextRotation = '0deg';
-		}, 500);
-	}
 
 	function toggleGenerated() {
-		//genTextTransitionDuration = 0;
-		genTextOpacity = 0;
-		genTextRotation = '-90deg';
-
+		
+		isGenerated = false;
 		setTimeout(() => {
 			generatedText = getRandomAdjective();
-			//genTextTransitionDuration = 250;
-			genTextOpacity = 1;
-			genTextRotation = '0deg';
-		}, 500);
+			isGenerated = true;
+		}, 250);
 	}
 
 	function getRandomAdjective(): string {
@@ -46,8 +26,9 @@
 	onMount(() => {
 		setTimeout(() => {
 			generatedText = getRandomAdjective();
+			isGenerated = true;
 			showPage = true;
-		}, 2000);
+		}, 200);
 	});
 </script>
 
@@ -56,166 +37,86 @@
 </svelte:head>
 
 {#if showPage}
-	<div class="about-container" transition:scale={{ delay: 500, duration: 500, easing: quintInOut, start: 0, opacity: 0 }}>
-		<button
-			class="button"
-			on:click={() => {
-				isAboutModalOpen = true;
-			}}
-		>
-			<span>About</span>
-		</button>
-		<AboutModal bind:isOpen={isAboutModalOpen} />
+	<div class="generator" transition:fly={{ duration: 200, easing: quadInOut, x: 0, y: "10%", opacity: 0 }}>
+		<h2 class="heading">
+			<div class="generated">
+				{#if isGenerated}
+					<span
+						in:fly={{ duration: 200, easing: quadInOut, x: 40, y: 0, opacity: 0 }}
+						out:fly={{ duration: 200, easing: quadInOut, x: -40, y: 0, opacity: 0 }}
+					>{generatedText}</span>
+				{/if}
+			</div>
+			<span>by you</span>
+		</h2>
+		
+		<div class="cta">
+			<button class="button" on:click={toggleGenerated}>
+				<span>Generate</span>
+			</button>
+		</div>
+		<!-- div.CTA -->
 	</div>
 {/if}
 
-<div class="container">
-	<Header isPageLoaded={showPage} />
-
-
-	{#if showPage}
-		<main
-			class="main"
-			transition:fly={{ duration: 500, easing: quadInOut, x: 0, y: '20%', opacity: 0 }}
-		>
-			<div class="subheading">
-				<h2 class="h2">
-					<div
-						class="generated"
-						bind:this={GeneratedWrapper}
-						style={`transition-duration: 250ms; transform: rotate(${genTextRotation}); opacity: ${genTextOpacity};`}
-					>
-						<span class="text">{generatedText}</span>
-					</div>
-					<span>by you</span>
-				</h2>
-			</div>
-			<!-- div.SubMainHeading -->
-			
-			<div class="cta">
-				<button class="button" on:click={toggleGenerated}>
-					<span>Cycle</span>
-				</button>
-			</div>
-			<!-- div.CTA -->
-		</main>
-	{/if}
-
-	{#if showPage}
-		<footer class="footer" transition:scale={{ delay: 500, duration: 500, easing: quintInOut, start: 0, opacity: 0 }}>
-			<span>
-				Crafted at The Webware Workshop
-			</span>
-		</footer>
-	{/if}
-</div>
-
 <style>
-	.container {
+	.generator {
 		width: 100%;
-		max-width: 900px;
-		height: 100%;
-		overflow-y: auto;
-		position: relative;
-	}
-
-	.about-container {
-		padding: 20px;
-		position: fixed;
-		top: 0;
-		right: 0;
-
-		& > .button {
-			color: hsl(var(--clr-black-bean));
-			padding: 12px;
-			background: hsl(var(--clr-pale-dogwood));
-
-			&:where(:hover, :focus) {
-				color: hsl(var(--clr-pale-dogwood));
-				background: hsl(var(--clr-black-bean));
-			}
-		}
-	}
-
-	.main {
-		padding-top: 60px;
-		padding-inline: 20px;
-		padding-bottom: 60px;
-
-		@media screen and (min-width: 900px) {
-			padding-top: 120px;
-		}
-
-		& > .subheading {
+		max-width: 1200px;
+		display: flex;
+		flex-direction: column;
+		gap: 60px;
+		
+		& > .heading {
 			font-size: 40px;
 			font-weight: 900;
 			line-height: 1;
 			color: hsl(var(--clr-pale-dogwood));
-			max-width: 100%;
+			display: flex;
+			flex-direction: column;
 
-			@media screen and (min-width: 900px) {
+			@media screen and (min-width: 600px) {
 				font-size: 60px;
 			}
 
-			& > .h2 {
-				font: inherit;
+			& > .generated {
+				color: hsl(var(--clr-black-bean));
+				text-transform: capitalize;
+				width: 100%;
+				height: 40px;
 
-				& > .generated {
-					color: hsl(var(--clr-black-bean));
-					transform-origin: left center;
-					text-transform: capitalize;
-					position: relative;
+				&::selection {
+					color: hsl(var(--clr-pale-dogwood));
+					background: hsl(var(--clr-black-bean));
+				}
 
-					&::selection {
-						color: hsl(var(--clr-pale-dogwood));
-						background: hsl(var(--clr-black-bean));
-					}
+				@media screen and (min-width: 600px) {
+					height: 60px;
+				}
+
+				& > span {
+					display: inline-block;
+					width: 100%;
 				}
 			}
 		}
 
 		& > .cta {
-			padding-top: 60px;
-
 			& > .button {
 				color: hsl(var(--clr-black-bean));
-				padding: 20px 60px;
+				width: 100%;
+				padding-inline: 90px;
+				padding-block: 30px;
 				background: hsl(var(--clr-pale-dogwood));
 
 				&:where(:hover, :focus) {
 					color: hsl(var(--clr-pale-dogwood));
 					background: hsl(var(--clr-black-bean));
 				}
-			}
-		}
-	}
 
-	.footer {
-		position: fixed;
-		bottom: 0;
-		right: 0;
-		isolation: isolate;
-		padding: 24px;
-
-		& > span {
-			color: hsl(var(--clr-black-bean));
-		}
-
-		& > .link {
-			font-size: 16px;
-			font-weight: 500;
-			line-height: 1.5;
-			color: hsl(var(--clr-black-bean));
-			text-decoration: none;
-			outline: 2px dashed transparent;
-			outline-offset: 4px;
-
-			&:hover {
-				color: hsl(var(--clr-pale-dogwood));
-			}
-
-			&:focus-visible {
-				outline-color: hsl(var(--clr-pale-dogwood));
+				@media screen and (min-width: 480px) {
+					max-width: max-content;
+				}
 			}
 		}
 	}
