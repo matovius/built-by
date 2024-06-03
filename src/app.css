@@ -43,7 +43,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 9999rem;
+  border-radius: 0px;
   border: none;
   outline: 2px solid transparent;
   outline-offset: 4px;
