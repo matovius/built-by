@@ -1,6 +1,7 @@
 <script lang="ts">
 	import '@fontsource-variable/inter';
 	import '../app.css';
+	import Header from '$lib/components/Header.svelte';
 </script>
 
 <slot />
