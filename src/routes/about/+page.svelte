@@ -13,7 +13,7 @@
 </script>
 
 <svelte:head>
-	<title>Built By</title>
+	<title>About Built By</title>
 </svelte:head>
 
 {#if showPage}
