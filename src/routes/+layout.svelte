@@ -4,7 +4,13 @@
 	import Header from '$lib/components/Header.svelte';
 </script>
 
-<slot />
+<div class="app">
+	<Header />
+
+	<main class="main">
+		<slot />
+	</main>
+</div>
 
 <style>
 	.app {
